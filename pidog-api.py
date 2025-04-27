@@ -7,13 +7,25 @@ app = Flask(__name__)
 # Directory containing allowed Python scripts
 SCRIPTS_DIR = "/path/to/scripts"
 
-@app.route("/run-script/<filename>", methods=["GET"])
-def run_script(filename):
-    # Prevent directory traversal attacks
-    if os.path.basename(filename) != filename:
-        return jsonify({"error": "Invalid filename."}), 400
+# Map of allowed keywords to script filenames
+SCRIPT_MAP = {
+    "backup": "backup_script.py",
+    "update": "update_script.py"
+}
 
+@app.route("/run-script/<key>", methods=["GET"])
+def run_script(key):
+    # Only allow execution of mapped scripts
+    if key not in SCRIPT_MAP:
+        return jsonify({"error": "Script not allowed."}), 403
+
+    filename = SCRIPT_MAP[key]
     script_path = os.path.join(SCRIPTS_DIR, filename)
+
+    # Ensure the resolved filename matches exactly to prevent traversal
+    if os.path.basename(script_path) != filename:
+        return jsonify({"error": "Invalid script configuration."}), 400
+
     if not os.path.isfile(script_path):
         return jsonify({"error": f"Script '{filename}' not found."}), 404
 
