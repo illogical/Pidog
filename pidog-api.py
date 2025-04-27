@@ -1,17 +1,38 @@
-from flask import Flask, jsonify
 import os
+import sys
+import json
 import subprocess
+from flask import Flask, jsonify
 
-app = Flask(__name__)
+# Load configuration from JSON file
+CONFIG_PATH = os.environ.get('CONFIG_PATH', 'pidog-api-config.json')
+
+def load_config(path):
+    if not os.path.isfile(path):
+        print(f"Config file '{path}' not found.", file=sys.stderr)
+        sys.exit(1)
+    try:
+        with open(path) as f:
+            return json.load(f)
+    except json.JSONDecodeError as e:
+        print(f"Error parsing config file: {e}", file=sys.stderr)
+        sys.exit(1)
+
+config = load_config(CONFIG_PATH)
 
 # Directory containing allowed Python scripts
-SCRIPTS_DIR = "/path/to/scripts"
+SCRIPTS_DIR = config.get('scripts_dir')
+if not SCRIPTS_DIR:
+    print("'scripts_dir' not defined in config.", file=sys.stderr)
+    sys.exit(1)
 
 # Map of allowed keywords to script filenames
-SCRIPT_MAP = {
-    "backup": "backup_script.py",
-    "update": "update_script.py"
-}
+SCRIPT_MAP = config.get('script_map', {})
+if not isinstance(SCRIPT_MAP, dict) or not SCRIPT_MAP:
+    print("'script_map' not defined or invalid in config.", file=sys.stderr)
+    sys.exit(1)
+
+app = Flask(__name__)
 
 @app.route("/run-script/<key>", methods=["GET"])
 def run_script(key):
@@ -35,7 +56,7 @@ def run_script(key):
             ["python3", script_path],
             capture_output=True,
             text=True,
-            timeout=30
+            timeout=config.get('timeout', 30)
         )
         return jsonify({
             "stdout": result.stdout,
@@ -48,4 +69,6 @@ def run_script(key):
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    host = config.get('host', '0.0.0.0')
+    port = config.get('port', 5000)
+    app.run(host=host, port=port)

@@ -1,0 +1,10 @@
+{
+    "scripts_dir": "/home/pi/scripts",
+    "script_map": {
+      "backup": "backup_script.py",
+      "update": "update_script.py"
+    },
+    "timeout": 30,
+    "host": "0.0.0.0",
+    "port": 5000
+  }
