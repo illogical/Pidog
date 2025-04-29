@@ -1,5 +1,4 @@
-from lib.pidog import Pidog
-from lib.preset_actions import howling
+from lib.pidog.pidog import Pidog
 import time
 
 my_dog = Pidog()
@@ -33,11 +32,7 @@ def execute_command(command):
 
     my_dog.rgb_strip.set_mode('breath', color=[245, 10, 10], bps=2.5, brightness=0.8)
 
-    my_dog.do_action('sit', speed=50)
-    my_dog.head_move([[0, 0, 0]], pitch_comp=-40, immediately=True, speed=80)
-
     howling(my_dog)
-    my_dog.wait_all_done()
     time.sleep(5)
 
     # Lay down again
@@ -63,4 +58,25 @@ def execute_command(command):
     #     case _:
     #         print("Unknown command.")
 
-    
+    def howling(my_dog, volume=100):
+        my_dog.do_action('sit', speed=80)
+        my_dog.head_move([[0, 0, -30]], speed=95)
+        my_dog.wait_all_done()
+
+        my_dog.rgb_strip.set_mode('speak', color='cyan', bps=0.6)
+        my_dog.do_action('half_sit', speed=80)
+        my_dog.head_move([[0, 0, -60]], speed=80)
+        my_dog.wait_all_done()
+        my_dog.speak('howling', volume)
+        my_dog.do_action('sit', speed=60)
+        my_dog.head_move([[0, 0, 10]], speed=70)
+        my_dog.wait_all_done()
+
+        my_dog.do_action('sit', speed=60)
+        my_dog.head_move([[0, 0, 10]], speed=80)
+        my_dog.wait_all_done()
+
+        sleep(2.34)
+        my_dog.do_action('sit', speed=80)
+        my_dog.head_move([[0, 0, -40]], speed=80)
+        my_dog.wait_all_done()
