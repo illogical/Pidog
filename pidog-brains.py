@@ -1,32 +1,35 @@
 from lib.pidog.pidog import Pidog
 import time
 
-my_dog = Pidog()
-touch_active = False  # Flag to track touch state
-
 def main():
+    my_dog = Pidog()
+    touch_active = False  # Flag to track touch state
+    print("Touch sensor waiting...")
 
     while True:
         touch_status = my_dog.dual_touch.read()
-        print(f"touch_status: {touch_status}")
 
         if touch_status != 'N' and not touch_active:
             print("Touch detected!")
             touch_active = True
-            execute_command(touch_status) # Execute command based on touch status
-            
+            my_dog.speak('howling', 100)
+            my_dog.do_action('sit', speed=80)
+            my_dog.wait_all_done()
+            time.sleep(5)
+            my_dog.do_action('lie', speed=50)
+
+            #execute_command(my_dog, touch_status) # Execute command based on touch status
         elif touch_active:
             print("Touch released.")
             touch_active = False
             
-
         time.sleep(0.5)
 
 if __name__ == "__main__":
     main()
 
 
-def execute_command(command):
+def execute_command(my_dog, command):
     # Placeholder for command execution logic
     print(f"Executing command: {command}")
 
@@ -58,25 +61,25 @@ def execute_command(command):
     #     case _:
     #         print("Unknown command.")
 
-    def howling(my_dog, volume=100):
-        my_dog.do_action('sit', speed=80)
-        my_dog.head_move([[0, 0, -30]], speed=95)
-        my_dog.wait_all_done()
+def howling(my_dog, volume=100):
+    my_dog.do_action('sit', speed=80)
+    my_dog.head_move([[0, 0, -30]], speed=95)
+    my_dog.wait_all_done()
 
-        my_dog.rgb_strip.set_mode('speak', color='cyan', bps=0.6)
-        my_dog.do_action('half_sit', speed=80)
-        my_dog.head_move([[0, 0, -60]], speed=80)
-        my_dog.wait_all_done()
-        my_dog.speak('howling', volume)
-        my_dog.do_action('sit', speed=60)
-        my_dog.head_move([[0, 0, 10]], speed=70)
-        my_dog.wait_all_done()
+    my_dog.rgb_strip.set_mode('speak', color='cyan', bps=0.6)
+    my_dog.do_action('half_sit', speed=80)
+    my_dog.head_move([[0, 0, -60]], speed=80)
+    my_dog.wait_all_done()
+    my_dog.speak('howling', volume)
+    my_dog.do_action('sit', speed=60)
+    my_dog.head_move([[0, 0, 10]], speed=70)
+    my_dog.wait_all_done()
 
-        my_dog.do_action('sit', speed=60)
-        my_dog.head_move([[0, 0, 10]], speed=80)
-        my_dog.wait_all_done()
+    my_dog.do_action('sit', speed=60)
+    my_dog.head_move([[0, 0, 10]], speed=80)
+    my_dog.wait_all_done()
 
-        sleep(2.34)
-        my_dog.do_action('sit', speed=80)
-        my_dog.head_move([[0, 0, -40]], speed=80)
-        my_dog.wait_all_done()
+    sleep(2.34)
+    my_dog.do_action('sit', speed=80)
+    my_dog.head_move([[0, 0, -40]], speed=80)
+    my_dog.wait_all_done()
