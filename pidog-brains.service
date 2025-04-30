@@ -1,0 +1,12 @@
+[Unit]
+Description=Pidog Brains Service
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /c/SynologyDrive/Drive/Development/RaspPi/Pidog/pidog-brains.py
+WorkingDirectory=/c/SynologyDrive/Drive/Development/RaspPi/Pidog
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
