@@ -3,23 +3,32 @@ import time
 
 def main():
     my_dog = Pidog()
-    touch_active = False  # Flag to track touch state
-    print("Touch sensor waiting...")
 
-    while True:
-        touch_status = my_dog.dual_touch.read()
+    try:
+        touch_active = False  # Flag to track touch state
+        print("Touch sensor waiting...")
 
-        if touch_status != 'N' and not touch_active:
-            print("Touch detected!")
-            touch_active = True
-            wake_up(my_dog)
+        while True:
+            touch_status = my_dog.dual_touch.read()
 
-            #execute_command(my_dog, touch_status) # Execute command based on touch status
-        elif touch_active:
-            print("Touch released.")
-            touch_active = False
-            
-        time.sleep(0.5)
+            if touch_status != 'N' and not touch_active:
+                print("Touch detected!")
+                touch_active = True
+                wake_up(my_dog)
+
+                #execute_command(my_dog, touch_status) # Execute command based on touch status
+            elif touch_active:
+                print("Touch released.")
+                touch_active = False
+                
+            time.sleep(0.5)
+    except KeyboardInterrupt:
+        pass
+    except Exception as e:
+        print(f"\033[31mERROR: {e}\033[m")
+    finally:
+        print("\ngoing to sleep ...")
+        my_dog.close()
 
 def execute_command(my_dog, command):
     # Placeholder for command execution logic
@@ -118,6 +127,7 @@ def wake_up(my_dog):
     my_dog.wait_all_done()
     time.sleep(2)
     my_dog.stop_and_lie()
+    my_dog.rgb_strip.close()
 
 
 if __name__ == "__main__":
