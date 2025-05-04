@@ -80,7 +80,7 @@ def record_audio(output_filename):
 
 def send_audio_for_transcription(audio_file_path):
     """Send audio file to server for transcription."""
-    url = "http://localhost:5050/transcribe"
+    url = "http://localhost:5000/transcribe"
     
     with open(audio_file_path, 'rb') as audio_file:
         files = {'audio': audio_file}

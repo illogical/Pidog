@@ -28,7 +28,7 @@ EXPOSE 5000
 
 # Set environment variable to specify which model to use
 # Options: tiny, base, small, medium, large
-ENV WHISPER_MODEL="base"
+ENV WHISPER_MODEL="large"
 
 # Command to run the server
 CMD ["python", "server.py"]

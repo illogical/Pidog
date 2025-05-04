@@ -1,0 +1,23 @@
+
+version: '3'
+
+services:
+  whisper-server:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - WHISPER_MODEL=large  # Change to tiny, base, small, medium, or large
+    restart: unless-stopped
+    volumes:
+      - whisper-models:/root/.cache/whisper  # Persist downloaded models
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+volumes:
+  whisper-models:
