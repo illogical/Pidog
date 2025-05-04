@@ -167,7 +167,7 @@ action_thread.daemon = True
 def transcribe_audio():
     """Send audio to the local server for transcription."""
     url = TRANSCRIBE_URL
-    with sr.Microphone(chunk_size=8192) as source:
+    with sr.Microphone(device_index=0, chunk_size=8192) as source:
         recognizer.adjust_for_ambient_noise(source)
         audio = recognizer.listen(source)
 
