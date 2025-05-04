@@ -7,6 +7,7 @@ def main():
     try:
         touch_active = False  # Flag to track touch state
         print("Touch sensor waiting...")
+        my_dog.speak("woohoo", 60)
 
         while True:
             touch_status = my_dog.dual_touch.read()
