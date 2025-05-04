@@ -107,9 +107,9 @@ def speak_hanlder():
         with speech_lock:
             _isloaded = speech_loaded
         if _isloaded:
-            gray_print('speak start')
+            print('speak start')
             my_dog.speak_block(tts_file)
-            gray_print('speak done')
+            print('speak done')
             with speech_lock:
                 speech_loaded = False
         time.sleep(0.05)
@@ -211,7 +211,7 @@ def main():
 
     while True:
         if input_mode == 'voice':
-            gray_print("listening ...")
+            print("listening ...")
 
             with action_lock:
                 action_status = 'standby'
@@ -254,7 +254,7 @@ def main():
         else:
             response_text = query_ollama(_result)
 
-        gray_print(f'chat takes: {time.time() - st:.3f} s')
+        print(f'chat takes: {time.time() - st:.3f} s')
 
         # actions & TTS
         # ---------------------------------------------------------------- 
@@ -272,7 +272,7 @@ def main():
             # ---- actions ----
             with action_lock:
                 actions_to_be_done = actions
-                gray_print(f'actions: {actions_to_be_done}')
+                print(f'actions: {actions_to_be_done}')
                 action_status = 'actions'
 
             # ---- wait actions done ----
