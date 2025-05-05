@@ -194,13 +194,16 @@ def query_ollama(prompt):
     """Send a prompt to the local Ollama server and get a response."""
     print("Querying Ollama...")
     
-    full_prompt = f"{SYSTEM_PROMPT}\n\n{prompt}"
-    options = { "num_gpu": 1, "main_gpu": 0, "temperature": 1, "main_gpu": 1, "num_gpu": 1 }
-    payload = {"prompt": full_prompt, "model": OLLAMA_MODEL, "stream": False, options: options}
+    full_prompt = f"system_prompt: {SYSTEM_PROMPT}\n\nuser_prompt: {prompt}"
+    #options = { "num_gpu": 1, "main_gpu": 0, "temperature": 1, "main_gpu": 1, "num_gpu": 1 }
+    payload = {"prompt": full_prompt, "model": OLLAMA_MODEL, "stream": False } #, options: options}
     response = requests.post(OLLAMA_URL, json=payload)
 
     if response.status_code == 200:
-        return response.json().get("response", "")
+        print("Ollama response received.")
+        print("Response:", response.json())
+        print()
+        return response.json().get("actions", "")
     else:
         print("Error querying Ollama:", response.json())
         return ""
