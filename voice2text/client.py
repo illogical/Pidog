@@ -70,6 +70,8 @@ def record_audio(output_filename):
     stream.close()
     audio.terminate()
     
+    print("Processing audio...")
+
     # Save the recorded audio as WAV file
     with wave.open(output_filename, 'wb') as wf:
         wf.setnchannels(CHANNELS)
@@ -77,8 +79,12 @@ def record_audio(output_filename):
         wf.setframerate(RATE)
         wf.writeframes(b''.join(frames))
 
+    print(f"Audio saved to {output_filename}")
+
 def send_audio_for_transcription(audio_file_path):
     """Send audio file to server for transcription."""
+    print("Sending audio for transcription...")
+    
     url = "http://localhost:5000/transcribe"
     
     with open(audio_file_path, 'rb') as audio_file:
@@ -90,7 +96,7 @@ def send_audio_for_transcription(audio_file_path):
         print("\nTranscription: " + result["text"])
         print(f"Processing time: {result['processing_time']:.2f} seconds")
     else:
-        print("Error:", response.json())
+        print("Transcription error:", response.json())
 
 def main():
     print("Local Voice-to-Text Client")
