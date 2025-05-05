@@ -6,9 +6,6 @@ import wave
 import requests
 import os
 import tempfile
-import time
-import threading
-import numpy as np
 import audioop
 
 # Voice-to-Text URL
@@ -17,13 +14,13 @@ VOICE_TO_TEXT_URL = "http://192.168.7.36:5000/transcribe"
 # Audio recording parameters
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
-RATE = 16000
-CHUNK = 1024
-MAX_RECORD_SECONDS = 60  # Maximum recording time as a safety limit
+RATE = 44100
+CHUNK = 4096
+MAX_RECORD_SECONDS = 6  # Maximum recording time as a safety limit
 
 # Voice activity detection parameters
 SILENCE_THRESHOLD = 300  # Adjust based on your microphone and environment
-SILENCE_CHUNKS = 30  # Number of consecutive silent chunks to stop recording (30 chunks ≈ 1.5 seconds)
+SILENCE_CHUNKS = 5  # Number of consecutive silent chunks to stop recording (30 chunks @ 1028 ≈ 1.5 seconds)
 
 def record_audio(output_filename):
     """Record audio from microphone and stop on silence."""

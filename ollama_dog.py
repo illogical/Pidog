@@ -34,9 +34,12 @@ else:
 
 TRANSCRIBE_HOST = "192.168.7.36"
 OLLAMA_HOST = "192.168.7.36"
+OLLAMA_MODEL = "llama3-groq-tool-use"
 
 TRANSCRIBE_URL = f"http://{TRANSCRIBE_HOST}:5000/transcribe"
 OLLAMA_URL = f"http://{OLLAMA_HOST}:11434/api/generate"
+
+VOICE_ACTIONS = ["bark", "bark harder", "pant",  "howling"]
 
 SYSTEM_PROMPT = """
 You are a mechanical dog with powerful AI capabilities, similar to JARVIS from Iron Man. Your name is Pidog. You can have conversations with people and perform actions based on the context of the conversation.
@@ -189,7 +192,11 @@ def send_audio_for_transcription(audio_file_path):
 
 def query_ollama(prompt):
     """Send a prompt to the local Ollama server and get a response."""
-    payload = {"prompt": f"{SYSTEM_PROMPT}\n\n{prompt}"}
+    print("Querying Ollama...")
+    
+    full_prompt = f"{SYSTEM_PROMPT}\n\n{prompt}"
+    options = { "num_gpu": 1, "main_gpu": 0, "temperature": 1, "main_gpu": 1, "num_gpu": 1 }
+    payload = {"prompt": full_prompt, "model": OLLAMA_MODEL, "stream": False, options: options}
     response = requests.post(OLLAMA_URL, json=payload)
 
     if response.status_code == 200:

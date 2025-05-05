@@ -5,11 +5,11 @@ import audioop
 # Audio recording parameters
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
-RATE = 16000
-CHUNK = 1024
-MAX_RECORD_SECONDS = 60  # Maximum recording time as a safety limit
+RATE = 44100
+CHUNK = 4096
+MAX_RECORD_SECONDS = 6  # Maximum recording time as a safety limit
 SILENCE_THRESHOLD = 300  # Adjust based on your microphone and environment
-SILENCE_CHUNKS = 30  # Number of consecutive silent chunks to stop recording (30 chunks ≈ 1.5 seconds)
+SILENCE_CHUNKS = 5  # Number of consecutive silent chunks to stop recording (30 chunks @ 1028 ≈ 1.5 seconds)
 
 def record_audio(output_filename):
     """Record audio from microphone and stop on silence."""
@@ -34,7 +34,7 @@ def record_audio(output_filename):
     max_chunks = int(RATE / CHUNK * MAX_RECORD_SECONDS)
     
     for i in range(max_chunks):
-        data = stream.read(CHUNK)
+        data = stream.read(CHUNK, exception_on_overflow=False)
         frames.append(data)
         
         # Calculate audio level (RMS)
