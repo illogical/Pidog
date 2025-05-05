@@ -8,7 +8,6 @@ import os
 import tempfile
 import time
 import threading
-import keyboard
 import numpy as np
 import audioop
 
@@ -100,23 +99,28 @@ def main():
     print("Tip: Adjust SILENCE_THRESHOLD in the code if recording stops too early or too late")
     
     while True:
-        keyboard.wait('space')
+        user_input = input("Enter your choice (r to record, q to quit): ").strip().lower()
         
-        # Create a temporary file for the recording
-        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.wav')
-        temp_file.close()
+        if user_input == 'r':
+            # Create a temporary file for the recording
+            temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.wav')
+            temp_file.close()
+            
+            # Record audio with automatic silence detection
+            record_audio(temp_file.name)
+            
+            # Send for transcription
+            send_audio_for_transcription(temp_file.name)
+            
+            # Clean up
+            os.unlink(temp_file.name)
         
-        # Record audio with automatic silence detection
-        record_audio(temp_file.name)
-        
-        # Send for transcription
-        send_audio_for_transcription(temp_file.name)
-        
-        # Clean up
-        os.unlink(temp_file.name)
-        
-        if keyboard.is_pressed('esc'):
+        elif user_input == 'q':
+            print("Exiting...")
             break
+        else:
+            print("Invalid input. Please type 'r' to record or 'q' to quit.")
+
 
 if __name__ == "__main__":
     try:
