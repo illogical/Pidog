@@ -11,6 +11,9 @@ import threading
 import numpy as np
 import audioop
 
+# Voice-to-Text URL
+VOICE_TO_TEXT_URL = "http://192.168.7.36:5000/transcribe"
+
 # Audio recording parameters
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
@@ -85,7 +88,7 @@ def send_audio_for_transcription(audio_file_path):
     """Send audio file to server for transcription."""
     print("Sending audio for transcription...")
     
-    url = "http://localhost:5000/transcribe"
+    url = VOICE_TO_TEXT_URL
     
     with open(audio_file_path, 'rb') as audio_file:
         files = {'audio': audio_file}
