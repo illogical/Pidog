@@ -13,9 +13,12 @@ SILENCE_CHUNKS = 30  # Number of consecutive silent chunks to stop recording (30
 
 def record_audio(output_filename):
     """Record audio from microphone and stop on silence."""
+    # Initialize PyAudio
+    print("Initializing audio recording...")
     audio = pyaudio.PyAudio()
     
     # Open microphone stream
+    print("Opening audio stream...")
     stream = audio.open(format=FORMAT, channels=CHANNELS,
                         rate=RATE, input=True,
                         frames_per_buffer=CHUNK)
