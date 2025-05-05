@@ -1,10 +1,10 @@
 from lib.action_flow import ActionFlow
-from utils import *
+from audio_recorder import record_audio
 
 import readline # optimize keyboard input, only need to import
 
 import requests
-import speech_recognition as sr
+import tempfile
 from lib.pidog.pidog import Pidog
 
 import time
@@ -60,13 +60,6 @@ b. For math problems, answer directly with the final.
 c. Sometimes you will report on your system and sensor status.
 d. You know you're a machine.
 """
-
-# speech_recognition init
-# =================================================================
-recognizer = sr.Recognizer()
-recognizer.dynamic_energy_adjustment_damping = 0.16
-recognizer.dynamic_energy_ratio = 1.6
-recognizer.pause_threshold = 1.0
 
 # dog init 
 # =================================================================
@@ -164,27 +157,34 @@ action_thread = threading.Thread(target=action_handler)
 action_thread.daemon = True
 
 
-def transcribe_audio():
-    """Send audio to the local server for transcription."""
+def record_and_transcribe_audio():
+    """Record audio and send it for transcription."""
+     # Create a temporary file for the recording
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.wav')
+    temp_file.close()
+
+    record_audio(temp_file.name)
+
+    return send_audio_for_transcription(temp_file.name)
+
+
+def send_audio_for_transcription(audio_file_path):
+    """Send audio file to server for transcription."""
+    print("Sending audio for transcription...")
+    
     url = TRANSCRIBE_URL
-    with sr.Microphone(device_index=0, chunk_size=8192) as source:
-        recognizer.adjust_for_ambient_noise(source)
-        audio = recognizer.listen(source)
-
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.wav') as temp_audio:
-        with open(temp_audio.name, 'wb') as f:
-            f.write(audio.get_wav_data())
-
-    with open(temp_audio.name, 'rb') as audio_file:
+    
+    with open(audio_file_path, 'rb') as audio_file:
         files = {'audio': audio_file}
         response = requests.post(url, files=files)
-
-    os.unlink(temp_audio.name)
-
+    
     if response.status_code == 200:
-        return response.json().get("text", "")
+        result = response.json()
+        print("\nTranscription: " + result["text"])
+        print(f"Processing time: {result['processing_time']:.2f} seconds")
+        return result["text"]
     else:
-        print("Error in transcription:", response.json())
+        print("Transcription error:", response.json())
         return ""
 
 def query_ollama(prompt):
@@ -217,7 +217,7 @@ def main():
                 action_status = 'standby'
             my_dog.rgb_strip.set_mode('listen', 'cyan', 1)
 
-            _result = transcribe_audio()
+            _result = record_and_transcribe_audio()
 
             if not _result:
                 print() # new line
