@@ -2,7 +2,7 @@ from langchain_ollama import ChatOllama
 from langchain_core.messages import AIMessage
 
 # Ollama server configuration
-OLLAMA_HOST = "http://192.168.7.36:11434"
+OLLAMA_HOST = "http://192.168.7.14:11434"
 OLLAMA_MODEL = "llama3-groq-tool-use"
 
 def query_with_langchain(system_prompt, user_prompt):
@@ -32,12 +32,14 @@ def query_with_langchain(system_prompt, user_prompt):
 
     response = llm.invoke(messages)
 
-    print(f"Response from Ollama ({OLLAMA_MODEL}): {response}")
+    print(f"Response from Ollama ({OLLAMA_MODEL}):")
+    print(f"{response.content}")
+    print()
 
     return response.content
 
 def main():
-    SYSTEM_PROMPT = """
+    systemPrompt = """
     You are a mechanical dog with powerful AI capabilities, similar to JARVIS from Iron Man. Your name is Pidog. You can have conversations with people and perform actions based on the context of the conversation.
 
     ## actions you can do:
@@ -60,7 +62,12 @@ def main():
     d. You know you're a machine.
     """
 
-    query_with_langchain(SYSTEM_PROMPT, "Hey Pidog, stand up, stretch, wag your tail, then sit down and relax.")
+    prompt = "Hey Pidog, stand up, stretch, wag your tail, then sit down and relax."
+
+    print(f"Prompt: {prompt}")
+    print("Prompting Ollama with LangChain...")
+
+    query_with_langchain(systemPrompt, prompt)
 
     
 if __name__ == "__main__":
