@@ -6,6 +6,7 @@ import readline # optimize keyboard input, only need to import
 import requests
 import tempfile
 from lib.pidog.pidog import Pidog
+from agent_ollama import query_with_langchain
 
 import time
 import threading
@@ -33,11 +34,7 @@ else:
 # Ollama server configuration
 
 TRANSCRIBE_HOST = "192.168.7.36"
-OLLAMA_HOST = "192.168.7.36"
-OLLAMA_MODEL = "llama3-groq-tool-use"
-
 TRANSCRIBE_URL = f"http://{TRANSCRIBE_HOST}:5000/transcribe"
-OLLAMA_URL = f"http://{OLLAMA_HOST}:11434/api/generate"
 
 VOICE_ACTIONS = ["bark", "bark harder", "pant",  "howling"]
 
@@ -190,24 +187,6 @@ def send_audio_for_transcription(audio_file_path):
         print("Transcription error:", response.json())
         return ""
 
-def query_ollama(prompt):
-    """Send a prompt to the local Ollama server and get a response."""
-    print("Querying Ollama...")
-    
-    full_prompt = f"system_prompt: {SYSTEM_PROMPT}\n\nuser_prompt: {prompt}"
-    #options = { "num_gpu": 1, "main_gpu": 0, "temperature": 1, "main_gpu": 1, "num_gpu": 1 }
-    payload = {"prompt": full_prompt, "model": OLLAMA_MODEL, "stream": False } #, options: options}
-    response = requests.post(OLLAMA_URL, json=payload)
-
-    if response.status_code == 200:
-        print("Ollama response received.")
-        print("Response:", response.json())
-        print()
-        return response.json().get("actions", "")
-    else:
-        print("Error querying Ollama:", response.json())
-        return ""
-
 # main
 # =================================================================
 def main():
@@ -260,9 +239,9 @@ def main():
         if with_img:
             img_path = './img_imput.jpg'
             cv2.imwrite(img_path, Vilib.img)
-            response_text = query_ollama(f"{_result}\n[Image attached: {img_path}]")
+            response_text = query_with_langchain(SYSTEM_PROMPT, f"{_result}\n[Image attached: {img_path}]")
         else:
-            response_text = query_ollama(_result)
+            response_text = query_with_langchain(SYSTEM_PROMPT, _result)
 
         print(f'chat takes: {time.time() - st:.3f} s')
 
