@@ -1,6 +1,5 @@
 from langchain_ollama import ChatOllama
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
+from langchain_core.messages import AIMessage
 
 # Ollama server configuration
 OLLAMA_HOST = "http://192.168.7.36:11434"
@@ -22,25 +21,20 @@ def query_with_langchain(system_prompt, user_prompt):
         base_url=OLLAMA_HOST,
         model=OLLAMA_MODEL,
         temperature=1.0,
-        streaming=False
+        streaming=False,
+        format="json"
     )
 
-    # Combine system prompt and user prompt
-    full_prompt = f"{system_prompt}\n\n{user_prompt}"
+    messages = [
+        ("system", system_prompt),
+        ("human", user_prompt)
+    ]
 
-    # Create a LangChain prompt template
-    prompt_template = PromptTemplate(
-        input_variables=["prompt"],
-        template="{prompt}"
-    )
+    response = llm.invoke(messages)
 
-    # Create an LLM chain
-    chain = LLMChain(llm=llm, prompt=prompt_template)
+    print(f"Response from Ollama ({OLLAMA_MODEL}): {response}")
 
-    # Run the chain with the combined prompt
-    response = chain.run({"prompt": full_prompt})
-
-    return response
+    return response.content
 
 def main():
     SYSTEM_PROMPT = """
