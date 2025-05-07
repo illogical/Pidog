@@ -19,7 +19,7 @@ current_path = os.path.dirname(os.path.abspath(__file__))
 os.chdir(current_path)
 
 input_mode = None
-with_img = True
+with_img = False
 args = sys.argv[1:]
 if '--keyboard' in args:
     input_mode = 'keyboard'
