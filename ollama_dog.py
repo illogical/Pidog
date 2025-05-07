@@ -252,12 +252,15 @@ def main():
         try:
             if isinstance(response, dict):
                 if 'actions' in response:
+                    print(f"Response was a dict with actions")
                     actions = list(response['actions'])
                 else:
+                    print(f"Response was a dict without actions")
                     actions = ['stop']
 
                 if 'answer' in response:
                     answer = response['answer']
+                    print(f"Answer: {answer}")
                 else:
                     answer = ''
 
@@ -269,6 +272,7 @@ def main():
             else:
                 response = str(response)
                 if len(response) > 0:
+                    print(f"Response was a string")
                     actions = ['stop']
                     answer = response
 
