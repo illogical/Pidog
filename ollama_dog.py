@@ -245,6 +245,12 @@ def main():
             print(f"Prompt: {_result}")
             response = query_with_langchain(SYSTEM_PROMPT, _result)
 
+
+        try:
+            response = eval(response) # convert to dict
+        except Exception as e:
+            response = str(response)
+
         print(f'chat takes: {time.time() - st:.3f} s')
 
         # actions & TTS
