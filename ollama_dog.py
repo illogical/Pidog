@@ -26,10 +26,10 @@ if '--keyboard' in args:
 else:
     input_mode = 'voice'
 
-if '--no-img' in args:
-    with_img = False
-else:
+if '--camera' in args:
     with_img = True
+else:
+    with_img = False
 
 # Ollama server configuration
 
@@ -139,6 +139,7 @@ def action_handler():
             pass
         elif _state == 'actions':
             with action_lock:
+                print(f'state = "{_state}"')
                 _actions = actions_to_be_done
             for _action in _actions:
                 try:
@@ -239,30 +240,50 @@ def main():
         if with_img:
             img_path = './img_imput.jpg'
             cv2.imwrite(img_path, Vilib.img)
-            response_text = query_with_langchain(SYSTEM_PROMPT, f"{_result}\n[Image attached: {img_path}]")
+            response = query_with_langchain(SYSTEM_PROMPT, f"{_result}\n[Image attached: {img_path}]")
         else:
-            response_text = query_with_langchain(SYSTEM_PROMPT, _result)
+            print(f"Prompt: {_result}")
+            response = query_with_langchain(SYSTEM_PROMPT, _result)
 
         print(f'chat takes: {time.time() - st:.3f} s')
 
         # actions & TTS
         # ---------------------------------------------------------------- 
         try:
-            if isinstance(response_text, str):
-                actions = ['stop']
-                answer = response_text
+            if isinstance(response, dict):
+                if 'actions' in response:
+                    actions = list(response['actions'])
+                else:
+                    actions = ['stop']
 
-            if len(answer) > 0:
-                _actions = list.copy(actions)
-                for _action in _actions:
-                    if _action in VOICE_ACTIONS:
-                        actions.remove(_action)
+                if 'answer' in response:
+                    answer = response['answer']
+                else:
+                    answer = ''
+
+                if len(answer) > 0:
+                    _actions = list.copy(actions)
+                    for _action in _actions:
+                        if _action in VOICE_ACTIONS:
+                            actions.remove(_action)
+            else:
+                response = str(response)
+                if len(response) > 0:
+                    actions = ['stop']
+                    answer = response
+
+        except:
+            actions = ['stop']
+            answer = ''
+        
+        try:
 
             # ---- actions ----
             with action_lock:
                 actions_to_be_done = actions
                 print(f'actions: {actions_to_be_done}')
                 action_status = 'actions'
+
 
             # ---- wait actions done ----
             while True:
