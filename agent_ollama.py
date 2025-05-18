@@ -2,7 +2,7 @@ from langchain_ollama import ChatOllama
 from langchain_core.messages import AIMessage
 
 # Ollama server configuration
-OLLAMA_HOST = "http://192.168.7.14:11434"
+OLLAMA_HOST = "http://hp2020:11434"
 OLLAMA_MODEL = "llama3-groq-tool-use"
 
 def query_with_langchain(system_prompt, user_prompt):

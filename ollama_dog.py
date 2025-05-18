@@ -33,7 +33,7 @@ else:
 
 # Ollama server configuration
 
-TRANSCRIBE_HOST = "192.168.7.36"
+TRANSCRIBE_HOST = "hp2020"
 TRANSCRIBE_URL = f"http://{TRANSCRIBE_HOST}:5000/transcribe"
 
 VOICE_ACTIONS = ["bark", "bark harder", "pant",  "howling"]
@@ -190,11 +190,29 @@ def send_audio_for_transcription(audio_file_path):
 
 # main
 # =================================================================
+def wait_for_touch(my_dog):
+    """Wait for touch detection before proceeding."""
+    print("Waiting for touch to start...")
+    my_dog.rgb_strip.set_mode('listen', color='yellow', bps=0.6, brightness=0.8)
+    
+    while True:
+        touch_status = my_dog.dual_touch.read()
+        if touch_status != 'N':  # Touch detected
+            print("Touch detected! Starting...")
+            my_dog.rgb_strip.set_mode('breath', color=[0, 255, 0], bps=1, brightness=0.8)
+            time.sleep(1)
+            my_dog.rgb_strip.close()
+            return True
+        time.sleep(0.3)
+
 def main():
     global action_status, actions_to_be_done
 
     my_dog.rgb_strip.close()
     action_flow.change_status(action_flow.STATUS_SIT)
+    
+    # Wait for touch before proceeding
+    wait_for_touch(my_dog)
 
     speak_thread.start()
     action_thread.start()
