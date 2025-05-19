@@ -203,7 +203,7 @@ def wait_for_touch(my_dog):
             time.sleep(1)
             my_dog.rgb_strip.close()
             return True
-        time.sleep(0.3)
+        time.sleep(0.2)
 
 def main():
     global action_status, actions_to_be_done
@@ -220,7 +220,6 @@ def main():
     while True:
         if input_mode == 'voice':
             print("listening ...")
-
             with action_lock:
                 action_status = 'standby'
             my_dog.rgb_strip.set_mode('listen', 'cyan', 1)
@@ -230,6 +229,10 @@ def main():
             if not _result:
                 print() # new line
                 continue
+
+            # Wait for touch before starting voice recording
+            print("Touch to start listening...")
+            wait_for_touch(my_dog)
 
         elif input_mode == 'keyboard':
             with action_lock:

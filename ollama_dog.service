@@ -1,0 +1,13 @@
+
+[Unit]
+Description=OllamaDog Service
+After=network.target
+
+[Service]
+ExecStart=/home/matt/Dev/pydog_env/bin/python3 ollama_dog.py
+WorkingDirectory=/home/matt/Dev/Pidog
+Restart=always
+User=matt
+
+[Install]
+WantedBy=multi-user.target
