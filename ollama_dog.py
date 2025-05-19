@@ -7,6 +7,7 @@ import requests
 import tempfile
 from lib.pidog.pidog import Pidog
 from agent_ollama import query_with_langchain
+from dotenv import load_dotenv
 
 import time
 import threading
@@ -14,6 +15,9 @@ import random
 
 import os
 import sys
+
+# Load environment variables from .env file
+load_dotenv()
 
 current_path = os.path.dirname(os.path.abspath(__file__))
 os.chdir(current_path)
@@ -31,10 +35,8 @@ if '--camera' in args:
 else:
     with_img = False
 
-# Ollama server configuration
-
-TRANSCRIBE_HOST = "beast2024"
-TRANSCRIBE_URL = f"http://{TRANSCRIBE_HOST}:5000/transcribe"
+# Voice2Text server configuration
+TRANSCRIBE_URL = os.getenv("TRANSCRIBE_URL", "http://localhost:5000/transcribe")
 
 VOICE_ACTIONS = ["bark", "bark harder", "pant",  "howling"]
 

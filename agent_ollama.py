@@ -1,9 +1,14 @@
 from langchain_ollama import ChatOllama
 from langchain_core.messages import AIMessage
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Ollama server configuration
-OLLAMA_HOST = "http://hp2020:11434"
-OLLAMA_MODEL = "llama3-groq-tool-use"
+OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3-groq-tool-use")
 
 def query_with_langchain(system_prompt, user_prompt):
     """
