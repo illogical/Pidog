@@ -33,7 +33,7 @@ else:
 
 # Ollama server configuration
 
-TRANSCRIBE_HOST = "hp2020"
+TRANSCRIBE_HOST = "beast2024"
 TRANSCRIBE_URL = f"http://{TRANSCRIBE_HOST}:5000/transcribe"
 
 VOICE_ACTIONS = ["bark", "bark harder", "pant",  "howling"]
@@ -177,7 +177,7 @@ def send_audio_for_transcription(audio_file_path):
     
     with open(audio_file_path, 'rb') as audio_file:
         files = {'audio': audio_file}
-        response = requests.post(url, files=files)
+        response = requests.post(url, files=files, timeout=15)
     
     if response.status_code == 200:
         result = response.json()
