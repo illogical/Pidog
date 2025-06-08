@@ -138,7 +138,7 @@ def action_callback(ch, method, properties, body):
         parsed_response = json.loads(response)
         # parsed_response.actions = parsed_response.get('actions', [])
         # parsed_response.answer = parsed_response.get('answer', '')
-        print(f"Parsed response.actions: {parsed_response.actions}")
+        print(f"Parsed response: {parsed_response}")
 
         response = eval(parsed_response)  # convert JSON string to dict
     except Exception as e:
