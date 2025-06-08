@@ -12,6 +12,7 @@ import threading
 import random
 
 import os
+import json
 
 # Load environment variables from .env file
 load_dotenv()
@@ -126,8 +127,6 @@ def action_callback(ch, method, properties, body):
     global action_status, actions_to_be_done
     response = body.decode()
 
-    print(f"Message received: {response}")
-
     global action_status, actions_to_be_done
 
     my_dog.rgb_strip.close()
@@ -136,7 +135,8 @@ def action_callback(ch, method, properties, body):
     action_thread.start()
 
     try:
-        response = eval(response) # convert to dict
+        # parse the response
+        response = eval(json.loads(response))  # convert JSON string to dict
     except Exception as e:
         response = str(response)
 
