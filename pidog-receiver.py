@@ -132,8 +132,6 @@ def action_callback(ch, method, properties, body):
     my_dog.rgb_strip.close()
     action_flow.change_status(action_flow.STATUS_SIT)
 
-    action_thread.start()
-
     try:
         # parse the response
         response = json.loads(response)
@@ -229,6 +227,7 @@ def start_rabbitmq_consumer(callback):
 
 if __name__ == "__main__":
     try:
+        action_thread.start()
         start_rabbitmq_consumer(action_callback)
     except KeyboardInterrupt:
         pass
