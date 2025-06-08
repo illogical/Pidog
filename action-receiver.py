@@ -17,6 +17,11 @@ if __name__ == "__main__":
     HOST = os.getenv("RABBITMQ_HOST")
     QUEUE = os.getenv("RABBITMQ_QUEUE")
 
+    print("Connecting to RabbitMQ with the following parameters:")
+    print(f"Username: {USERNAME}")
+    print(f"Host: {HOST}")
+    print(f"Queue: {QUEUE}")
+
     if None in (USERNAME, PASSWORD, HOST, QUEUE):
         raise ValueError("One or more RabbitMQ environment variables are not set.")
     
