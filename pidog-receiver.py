@@ -87,33 +87,32 @@ def action_handler():
     action_interval = 5 # seconds
     last_action_time = time.time()
 
-    while True:
-        with action_lock:
-            _state = action_status
-        if _state == 'standby':
-            if time.time() - last_action_time > action_interval:
-                choice = random.choices(standby_actions, standby_weights)[0]
-                action_flow.run(choice)
-                last_action_time = time.time()
-                action_interval = random.randint(2, 6)
-        elif _state == 'think':
-            pass
-        elif _state == 'actions':
-            with action_lock:
-                print(f'state = "{_state}"')
-                _actions = actions_to_be_done
-            for _action in _actions:
-                try:
-                    action_flow.run(_action)
-                except Exception as e:
-                    print(f'action error: {e}')
-                time.sleep(0.5)
-
-            with action_lock:
-                action_status = 'actions_done'
+    with action_lock:
+        _state = action_status
+    if _state == 'standby':
+        if time.time() - last_action_time > action_interval:
+            choice = random.choices(standby_actions, standby_weights)[0]
+            action_flow.run(choice)
             last_action_time = time.time()
+            action_interval = random.randint(2, 6)
+    elif _state == 'think':
+        pass
+    elif _state == 'actions':
+        with action_lock:
+            print(f'state = "{_state}"')
+            _actions = actions_to_be_done
+        for _action in _actions:
+            try:
+                action_flow.run(_action)
+            except Exception as e:
+                print(f'action error: {e}')
+            time.sleep(0.5)
 
-        time.sleep(0.01)
+        with action_lock:
+            action_status = 'actions_done'
+        last_action_time = time.time()
+
+    time.sleep(0.01)
 
 action_thread = threading.Thread(target=action_handler)
 action_thread.daemon = True
@@ -136,7 +135,12 @@ def action_callback(ch, method, properties, body):
 
     try:
         # parse the response
-        response = eval(json.loads(response))  # convert JSON string to dict
+        parsed_response = json.loads(response)
+        parsed_response.actions = parsed_response.get('actions', [])
+        parsed_response.answer = parsed_response.get('answer', '')
+        print(f"Parsed response.actions: {parsed_response.actions}")
+
+        response = eval(parsed_response)  # convert JSON string to dict
     except Exception as e:
         response = str(response)
 
