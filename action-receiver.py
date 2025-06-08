@@ -2,7 +2,7 @@
 """Blocking consumer for messages published."""
 import pika
 
-HOST  = "llmproxy"  # RabbitMQ server host
+HOST  = "beast2024.bangus-city.ts.net"
 QUEUE = "pidog-actions"
 
 def callback(ch, method, properties, body):
