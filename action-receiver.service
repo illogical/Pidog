@@ -3,7 +3,7 @@ Description=Pidog Command Receiver
 After=network.target
 
 [Service]
-ExecStart=/home/matt/.pyenv/versions/pidog_env/bin/python /home/matt/Dev/Pidog/action-receiver.py
+ExecStart=/home/matt/.pyenv/versions/pidog_env/bin/python /home/matt/Dev/Pidog/pidog-receiver.py
 WorkingDirectory=/home/matt/Dev/Pidog
 Restart=always
 User=pi
