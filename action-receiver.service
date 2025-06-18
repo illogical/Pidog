@@ -1,0 +1,12 @@
+[Unit]
+Description=Pidog Command Receiver
+After=network.target
+
+[Service]
+ExecStart=/home/matt/.pyenv/versions/pidog_env/bin/python /home/matt/Dev/Pidog/action-receiver.py
+WorkingDirectory=/home/matt/Dev/Pidog
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
